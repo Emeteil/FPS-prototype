@@ -5,7 +5,6 @@ using System.Collections.Generic;
 public class InventoryUI : MonoBehaviour
 {
     [Header("Settings")]
-    // [SerializeField] private Color slotBorderColor = new Color(0.8f, 0.8f, 0.8f, 0.8f);
     [SerializeField] private Color normalSlotColor = new Color(1, 1, 1, 0.5f);
     [SerializeField] private Color activeSlotColor = Color.white;
     [SerializeField] private int slotBorderWidth = 4;
@@ -41,24 +40,6 @@ public class InventoryUI : MonoBehaviour
             
             Image slotImage = slotObj.GetComponent<Image>();
             slotImage.color = normalSlotColor;
-            
-            // GameObject border = new GameObject("Border");
-            // border.transform.SetParent(slotObj.transform);
-            // border.transform.localPosition = Vector3.zero;
-            // border.transform.localScale = Vector3.one;
-            
-            // Image borderImage = border.AddComponent<Image>();
-            // borderImage.color = slotBorderColor;
-            // borderImage.raycastTarget = false;
-            
-            // border.transform.SetAsFirstSibling();
-            
-            // RectTransform borderRect = border.GetComponent<RectTransform>();
-            // borderRect.anchorMin = Vector2.zero;
-            // borderRect.anchorMax = Vector2.one;
-            // borderRect.sizeDelta = new Vector2(slotBorderWidth * 2, slotBorderWidth * 2);
-            // borderRect.offsetMin = new Vector2(-slotBorderWidth, -slotBorderWidth);
-            // borderRect.offsetMax = new Vector2(slotBorderWidth, slotBorderWidth);
 
             slotUIs.Add(slotUI);
         }
