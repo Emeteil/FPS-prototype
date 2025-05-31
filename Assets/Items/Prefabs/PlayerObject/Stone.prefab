@@ -1,0 +1,272 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &1796299550147839020
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4010545039177741548}
+  - component: {fileID: 173680438373866586}
+  - component: {fileID: 2520333927366771032}
+  m_Layer: 0
+  m_Name: Stone
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4010545039177741548
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1796299550147839020}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 5330009008563781887}
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &173680438373866586
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1796299550147839020}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 57b8d0a114ab9bc4b99275b112d1f5cf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  muzzleTransform: {fileID: 0}
+  playerCamera: {fileID: 0}
+  weaponAnimator: {fileID: 0}
+  damageProfile:
+    baseDamage: 10
+    headshotMultiplier: 2
+    limbMultiplier: 0.5
+    damageLayers:
+      serializedVersion: 2
+      m_Bits: 192
+    penetrateWalls: 0
+    impactForce: 6
+    maxAffectedMass: 50
+    considerDistanceForce: 1
+    maxDistanceForce: 50
+    useDistanceFalloff: 0
+    minFalloffDistance: 20
+    maxFalloffDistance: 100
+    minDamageMultiplier: 0.75
+    distanceFalloffCurve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 1
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 1
+        value: 0.5
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    useRandomDamage: 1
+    damageRandomization: 3
+    minDamageCap: 0.5
+    impactEffect: {fileID: 0}
+    bloodEffect: {fileID: 0}
+    decalEffect: {fileID: 0}
+  recoilProfile:
+    recoilKick: {x: 2, y: 2, z: 0}
+    recoilRecoverySpeed: 10
+    recoilSnappiness: 10
+    maxRecoilAngle: 30
+  ammoSystem:
+    clipSize: 30
+    currentAmmo: 30
+    reserveAmmo: 90
+    reloadTime: 2
+    infiniteAmmo: 0
+    maxReserveAmmo: 0
+  fireMode:
+    fireMode: 2
+    fireRate: 0.1
+    burstCount: 3
+    burstDelay: 0.1
+  spreadSettings:
+    baseSpread: 0.05
+    maxSpread: 1
+    spreadPerShot: 0.05
+    spreadRecoveryRate: 0.5
+    movementSpreadMultiplier: 1.3
+  weaponEvents:
+    OnShoot:
+      m_PersistentCalls:
+        m_Calls: []
+    OnReloadStart:
+      m_PersistentCalls:
+        m_Calls: []
+    OnReloadEnd:
+      m_PersistentCalls:
+        m_Calls: []
+    OnAmmoEmpty:
+      m_PersistentCalls:
+        m_Calls: []
+    OnHit:
+      m_PersistentCalls:
+        m_Calls: []
+    OnKill:
+      m_PersistentCalls:
+        m_Calls: []
+    OnDamageDealt:
+      m_PersistentCalls:
+        m_Calls: []
+    OnAmmoChanged:
+      m_PersistentCalls:
+        m_Calls: []
+  muzzleFlash: {fileID: 0}
+  shellEjectEffect: {fileID: 0}
+  shellEjectPoint: {fileID: 0}
+  ammoPickupEffect: {fileID: 0}
+  ammoPickupSound: {fileID: 0}
+  debugMode: 1
+  debugRayColor: {r: 1, g: 0, b: 0, a: 1}
+  debugRayDuration: 3
+  showHitPoint: 1
+  hitPointColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  hitPointSize: 0.1
+--- !u!114 &2520333927366771032
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1796299550147839020}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f0cc1c9934847f143a127c52e96101a8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  aimFOV: 40
+  aimSpeed: 15
+  returnSpeed: 15
+  aimKey: 324
+  animator: {fileID: 0}
+  aimAnimParam: Aiming
+  scopeOverlay: {fileID: 0}
+--- !u!1 &5831062311928497391
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5330009008563781887}
+  - component: {fileID: 8895559400564628889}
+  - component: {fileID: 9043849878396654971}
+  - component: {fileID: 145888030930654512}
+  m_Layer: 0
+  m_Name: Stone
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5330009008563781887
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5831062311928497391}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0.516, y: -0.311, z: 0.454}
+  m_LocalScale: {x: 0.49795, y: 0.49795, z: 0.49795}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4010545039177741548}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!33 &8895559400564628889
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5831062311928497391}
+  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!23 &9043849878396654971
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5831062311928497391}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &145888030930654512
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5831062311928497391}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 63145a9fd399b974cb6539d7cc2b9bd2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _block: 0

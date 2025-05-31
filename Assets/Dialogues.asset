@@ -1,0 +1,86 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bf19a6bf27677854881e61eb04eab358, type: 3}
+  m_Name: Dialogues
+  m_EditorClassIdentifier: 
+  dialogues:
+  - key: monolog_1
+    dialogue:
+    - characterName: Dave
+      characterTexture: {fileID: 21300000, guid: 9a72fe9f64804114ba4f50652dd54714, type: 3}
+      dialogueText: 'Shit! '
+      dialogueClip: {fileID: 0}
+      stopAudio: 0
+      useLetterSound: 1
+      defaultDelayLetters: 0.07
+      delay: 0.5
+    - characterName: Dave
+      characterTexture: {fileID: 21300000, guid: 9a72fe9f64804114ba4f50652dd54714, type: 3}
+      dialogueText: The passage is blocked with blocks of ice
+      dialogueClip: {fileID: 0}
+      stopAudio: 0
+      useLetterSound: 1
+      defaultDelayLetters: 0.07
+      delay: 2
+    - characterName: Dave
+      characterTexture: {fileID: 21300000, guid: 9a72fe9f64804114ba4f50652dd54714, type: 3}
+      dialogueText: I gotta figure something out before I freeze to death in here
+      dialogueClip: {fileID: 0}
+      stopAudio: 0
+      useLetterSound: 1
+      defaultDelayLetters: 0.07
+      delay: 2
+  - key: monolog_2
+    dialogue:
+    - characterName: Dave
+      characterTexture: {fileID: 21300000, guid: 9a72fe9f64804114ba4f50652dd54714, type: 3}
+      dialogueText: I gotta find something to get me out of this damn place.
+      dialogueClip: {fileID: 0}
+      stopAudio: 0
+      useLetterSound: 1
+      defaultDelayLetters: 0.07
+      delay: 2
+    - characterName: Dave
+      characterTexture: {fileID: 21300000, guid: 9a72fe9f64804114ba4f50652dd54714, type: 3}
+      dialogueText: With the resources we have around here I can try to put together
+        something like a drill rig.....
+      dialogueClip: {fileID: 0}
+      stopAudio: 0
+      useLetterSound: 1
+      defaultDelayLetters: 0.08
+      delay: 2
+    - characterName: Dave
+      characterTexture: {fileID: 21300000, guid: 9a72fe9f64804114ba4f50652dd54714, type: 3}
+      dialogueText: I hope I can do it.
+      dialogueClip: {fileID: 0}
+      stopAudio: 0
+      useLetterSound: 1
+      defaultDelayLetters: 0.1
+      delay: 2
+  - key: monolog_3
+    dialogue:
+    - characterName: Dave
+      characterTexture: {fileID: 21300000, guid: 9a72fe9f64804114ba4f50652dd54714, type: 3}
+      dialogueText: Now we have to get out of here fast
+      dialogueClip: {fileID: 0}
+      stopAudio: 0
+      useLetterSound: 1
+      defaultDelayLetters: 0.07
+      delay: 1.5
+    - characterName: Game
+      characterTexture: {fileID: 21300000, guid: cae8c40f9b43cf24ca5c286218cb6203, type: 3}
+      dialogueText: You passed the game! Congratulations!
+      dialogueClip: {fileID: 0}
+      stopAudio: 0
+      useLetterSound: 0
+      defaultDelayLetters: 0.08
+      delay: 1
