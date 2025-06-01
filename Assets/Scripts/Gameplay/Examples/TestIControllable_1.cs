@@ -8,6 +8,7 @@ public class TestIControllable_1 : MonoBehaviour, IControllable, IInteractable
     [SerializeField] private Transform doorPoint;
     [SerializeField] private Camera blackboardCamera;
     private InteractableText interactableText;
+    private Rigidbody rb;
 
     private GameObject _playerObj;
     private bool _blockMove = true;
@@ -40,6 +41,7 @@ public class TestIControllable_1 : MonoBehaviour, IControllable, IInteractable
 
     private void Start()
     {
+        rb = GetComponent<Rigidbody>();
         interactableText = GetComponent<InteractableText>();
         _playerObj = GameObject.FindGameObjectWithTag("Player");
     }
@@ -57,10 +59,13 @@ public class TestIControllable_1 : MonoBehaviour, IControllable, IInteractable
         _playerObj.transform.position = doorPoint.position;
 
         float moveInput = Input.GetAxis("Vertical");
-        transform.Translate(Vector3.forward * moveInput * moveSpeed * Time.deltaTime);
-
         float rotationInput = Input.GetAxis("Horizontal");
-        transform.Rotate(Vector3.up * rotationInput * rotationSpeed * Time.deltaTime);
+
+        Vector3 moveDirection = transform.forward * moveInput * moveSpeed * Time.deltaTime;
+        rb.MovePosition(rb.position + moveDirection);
+
+        Quaternion rotation = Quaternion.Euler(0f, rotationInput * rotationSpeed * Time.deltaTime, 0f);
+        rb.MoveRotation(rb.rotation * rotation);
     }
 
     public void OnControllerEnabled()

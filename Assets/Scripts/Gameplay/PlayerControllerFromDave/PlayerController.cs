@@ -25,7 +25,6 @@ public class PlayerController : MonoBehaviour, IControllable
     {
         playerMovment.Unblock();
         playerCamera.Unblock();
-        inventorySystem.Unblock();
         grabUp.Unblock();
         
         ControllerManager.Instance.SetGlobalCursorState(CursorState.ForceLocked);
@@ -34,6 +33,7 @@ public class PlayerController : MonoBehaviour, IControllable
     public void OnControllerEnabledAfter()
     {
         playerInteraction.Unblock();
+        inventorySystem.Unblock();
 
         if (meshRenderer != null)
             meshRenderer.enabled = true;

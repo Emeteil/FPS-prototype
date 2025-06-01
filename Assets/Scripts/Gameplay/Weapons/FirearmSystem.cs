@@ -7,8 +7,6 @@ public class DamageProfile
 {
     [Header("Основные настройки")]
     [Range(0.1f, 1000f)] public float baseDamage = 10f;
-    [Range(0f, 5f)] public float headshotMultiplier = 2f;
-    [Range(0f, 5f)] public float limbMultiplier = 0.5f;
     public LayerMask damageLayers;
     public bool penetrateWalls = false;
 
@@ -232,13 +230,7 @@ public class FirearmSystem : MonoBehaviour
 
     private void HandleInput()
     {
-        if (_block || isReloading) return;
-
-        if (Input.GetKeyDown(KeyCode.R) && ammoSystem.currentAmmo < ammoSystem.clipSize && ammoSystem.reserveAmmo > 0)
-        {
-            StartCoroutine(Reload());
-            return;
-        }
+        if (_block) return;
 
         if (Input.GetKeyDown(PlayerInteraction.Instance.InteractionKey))
         {
@@ -246,6 +238,13 @@ public class FirearmSystem : MonoBehaviour
             return;
         }
 
+        if (isReloading) return;
+
+        if (Input.GetKeyDown(KeyCode.R) && ammoSystem.currentAmmo < ammoSystem.clipSize && ammoSystem.reserveAmmo > 0)
+        {
+            StartCoroutine(Reload());
+            return;
+        }
         switch (fireMode.fireMode)
         {
             case FireMode.WeaponFireMode.Semi:
@@ -459,16 +458,6 @@ public class FirearmSystem : MonoBehaviour
     private float CalculateDamage(RaycastHit hit)
     {
         float damage = damageProfile.baseDamage;
-
-        // TODO: Remake this
-        // if (hit.collider.CompareTag("Head"))
-        // {
-        //     damage *= damageProfile.headshotMultiplier;
-        // }
-        // else if (hit.collider.CompareTag("Limb"))
-        // {
-        //     damage *= damageProfile.limbMultiplier;
-        // }
 
         if (damageProfile.useDistanceFalloff && damage > 0)
         {
