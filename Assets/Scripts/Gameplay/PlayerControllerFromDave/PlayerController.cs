@@ -24,6 +24,7 @@ public class PlayerController : MonoBehaviour, IControllable
     public void OnControllerEnabled()
     {
         playerMovment.Unblock();
+        playerMovment.CrouchUp();
         playerCamera.Unblock();
         grabUp.Unblock();
         

@@ -91,7 +91,7 @@ GameObject:
   - component: {fileID: 1071124355493756893}
   - component: {fileID: 1071124355493756894}
   - component: {fileID: 1071124355493756895}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: PlayerMesh
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -176,7 +176,7 @@ GameObject:
   - component: {fileID: 1071124355771475571}
   - component: {fileID: 1071124355771475572}
   - component: {fileID: 5184712702584264546}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Main Camera
   m_TagString: MainCamera
   m_Icon: {fileID: 0}
@@ -303,7 +303,7 @@ GameObject:
   - component: {fileID: 4395549430641785568}
   - component: {fileID: 4555786724642619196}
   - component: {fileID: 8334984725919035224}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: player
   m_TagString: Player
   m_Icon: {fileID: 0}
@@ -1035,7 +1035,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5421580933669098752}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: PullTarget
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1200,7 +1200,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1830101995968427323}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Hands
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1684,7 +1684,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1514312941804304075}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: ThrowOrigin
   m_TagString: Untagged
   m_Icon: {fileID: 0}

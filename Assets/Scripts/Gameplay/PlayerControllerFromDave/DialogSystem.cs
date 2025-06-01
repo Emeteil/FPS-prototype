@@ -7,29 +7,29 @@ using UnityEngine.UI;
 [Serializable]
 public class DialogueElement
 {
-    [Tooltip("Character Name.")]
+    [Tooltip("Имя персонажа.")]
     public string characterName;
 
-    [Tooltip("Character Avatar.")]
+    [Tooltip("Аватар персонажа.")]
     public Sprite characterTexture;
 
     [TextArea(3, 10)]
-    [Tooltip("Dialogue Text.")]
+    [Tooltip("Текст диалога.")]
     public string dialogueText;
 
-    [Tooltip("Voiceover.")]
+    [Tooltip("Голос.")]
     public AudioClip dialogueClip;
 
-    [Tooltip("Stopping on audio.")]
+    [Tooltip("Остановка на звуке.")]
     public bool stopAudio = false;
 
-    [Tooltip("Sound when displaying letters.")]
+    [Tooltip("Звук при отображении букв.")]
     public bool useLetterSound = true;
 
-    [Tooltip("DefaultDelayLetters.")]
+    [Tooltip("Задержка при отображении букв.")]
     public float defaultDelayLetters = 0.07f;
 
-    [Tooltip("Delay.")]
+    [Tooltip("Задержка.")]
     public float delay = 0f;
 }
 
@@ -58,6 +58,9 @@ public class DialogSystem : MonoBehaviour
     [SerializeField] private Text textObj;
     [SerializeField] private Image imgObj;
     [SerializeField] private Text nameObj;
+
+    private Queue<List<DialogueElement>> dialogueQueue = new Queue<List<DialogueElement>>();
+    private Coroutine currentDialogueCoroutine;
 
     public static DialogSystem Instance { get; private set; }
 
@@ -89,10 +92,18 @@ public class DialogSystem : MonoBehaviour
         return new List<DialogueElement>();
     }
 
-    private IEnumerator _StartDialogue(List<DialogueElement> dialogueElements, float delay = 0f)
+    private IEnumerator ProcessDialogueQueue()
+    {
+        while (dialogueQueue.Count > 0)
+        {
+            List<DialogueElement> dialogueElements = dialogueQueue.Dequeue();
+            yield return StartCoroutine(PlayDialogue(dialogueElements));
+        }
+    }
+
+    private IEnumerator PlayDialogue(List<DialogueElement> dialogueElements, float delay = 0f)
     {
         if (dialogueElements.Count == 0) yield break;
-        if (inDialogue) yield break;
 
         inDialogue = true;
         yield return new WaitForSeconds(delay);
@@ -143,13 +154,38 @@ public class DialogSystem : MonoBehaviour
         dialogueWindow.SetActive(false);
     }
 
-    public bool StartDialogue(string dialogueKey, float delay = 0f)
+    public bool StartDialogue(string dialogueKey, float delay = 0f, bool isPriority = false) =>
+        AddDialogueToQueue(dialogueKey, delay, isPriority);
+
+    public bool AddDialogueToQueue(string dialogueKey, float delay = 0f, bool isPriority = false)
     {
         List<DialogueElement> dialogueElements = GetDialogueElements(dialogueKey);
         if (dialogueElements.Count == 0) return false;
-        if (inDialogue) return false;
 
-        StartCoroutine(_StartDialogue(dialogueElements, delay));
+        if (isPriority)
+        {
+            StopAllCoroutines();
+            dialogueQueue.Clear();
+            currentDialogueCoroutine = StartCoroutine(PlayDialogue(dialogueElements, delay));
+        }
+        else
+        {
+            dialogueQueue.Enqueue(dialogueElements);
+            if (!inDialogue && currentDialogueCoroutine == null)
+            {
+                currentDialogueCoroutine = StartCoroutine(ProcessDialogueQueue());
+            }
+        }
+
         return true;
+    }
+
+    public void ClearDialogueQueue()
+    {
+        StopAllCoroutines();
+        dialogueQueue.Clear();
+        inDialogue = false;
+        dialogueWindow.SetActive(false);
+        currentDialogueCoroutine = null;
     }
 }

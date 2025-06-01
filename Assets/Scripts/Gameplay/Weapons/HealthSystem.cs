@@ -5,8 +5,6 @@ public class HealthSystem : MonoBehaviour, IDamageable
 {
     public float maxHealth = 100f;
     public float currentHealth = 100f;
-    public bool HasArmor = false;
-    public float armorAmount = 50f;
 
     public UnityEvent OnDeath;
     public UnityEvent<float> OnDamageTaken; // Передает количество полученного урона
@@ -16,19 +14,13 @@ public class HealthSystem : MonoBehaviour, IDamageable
     {
         if (currentHealth <= 0) return false;
 
-        if (HasArmor && armorAmount > 0)
-        {
-            float armorDamage = damage * 0.5f;
-            armorAmount -= armorDamage;
-            damage *= 0.5f;
-        }
-
         currentHealth -= damage;
         OnDamageTaken.Invoke(damage);
         OnHealthChanged.Invoke(currentHealth / maxHealth);
 
         if (currentHealth <= 0)
         {
+            currentHealth = 0;
             Die();
             return true;
         }

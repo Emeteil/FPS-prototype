@@ -90,6 +90,10 @@ public class PlayerMovment : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         rb.freezeRotation = true;
         readyToJump = true;
+    }
+
+    private void Awake()
+    {
         startYScale = transform.localScale.y;
     }
 
@@ -155,9 +159,9 @@ public class PlayerMovment : MonoBehaviour
         rb.AddForce(Vector3.down * 5f, ForceMode.Impulse);
     }
 
-    private void CrouchUp()
+    public void CrouchUp()
     {
-            transform.localScale = new Vector3(transform.localScale.x, startYScale, transform.localScale.z);
+        transform.localScale = new Vector3(transform.localScale.x, startYScale, transform.localScale.z);
     }
 
     private void StateHandler()
