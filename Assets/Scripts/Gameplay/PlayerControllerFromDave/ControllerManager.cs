@@ -67,7 +67,13 @@ public class ControllerManager : MonoBehaviour
             SwitchController(defaultController as IControllable, ControllerSwitchMode.Immediate);
     }
 
-    public void SwitchController(IControllable newController, ControllerSwitchMode mode = ControllerSwitchMode.SmoothTransition, Action onComplete = null)
+    public void SwitchController(
+        IControllable newController,
+        ControllerSwitchMode mode = ControllerSwitchMode.SmoothTransition,
+        Action onComplete = null,
+        float _transitionDuration = -1,
+        AnimationCurve _transitionCurve = null
+    )
     {
         if (newController == null || currentController == newController) 
         {
@@ -83,27 +89,51 @@ public class ControllerManager : MonoBehaviour
             
         targetController = newController;
 
+        if (_transitionDuration == -1)
+            _transitionDuration = transitionDuration;
+        
+        if (_transitionCurve == null)
+            _transitionCurve = transitionCurve;
+
         switch (mode)
-        {
-            case ControllerSwitchMode.Immediate:
-                PerformImmediateSwitch();
-                onComplete?.Invoke();
-                break;
-                
-            case ControllerSwitchMode.SmoothTransition:
-                transitionCoroutine = StartCoroutine(SmoothTransition(onComplete));
-                break;
-                
-            case ControllerSwitchMode.Deferred:
-                transitionCoroutine = StartCoroutine(DeferredTransition(onComplete));
-                break;
-        }
+            {
+                case ControllerSwitchMode.Immediate:
+                    PerformImmediateSwitch();
+                    onComplete?.Invoke();
+                    break;
+
+                case ControllerSwitchMode.SmoothTransition:
+                    transitionCoroutine = StartCoroutine(SmoothTransition(
+                        onComplete,
+                        _transitionDuration,
+                        _transitionCurve
+                    ));
+                    break;
+
+                case ControllerSwitchMode.Deferred:
+                    transitionCoroutine = StartCoroutine(DeferredTransition(
+                        onComplete,
+                        _transitionDuration,
+                        _transitionCurve
+                    ));
+                    break;
+            }
     }
 
-    public void SwitchToDefault(ControllerSwitchMode mode = ControllerSwitchMode.SmoothTransition, Action onComplete = null)
+    public void SwitchToDefault(
+        ControllerSwitchMode mode = ControllerSwitchMode.SmoothTransition,
+        Action onComplete = null,
+        float _transitionDuration = -1,
+        AnimationCurve _transitionCurve = null
+    )
     {
         if (defaultController != null && defaultController is IControllable)
-            SwitchController(defaultController as IControllable, mode, onComplete);
+            SwitchController(
+                defaultController as IControllable, mode,
+                onComplete,
+                _transitionDuration,
+                _transitionCurve
+            );
     }
 
     public void SetGlobalCursorState(CursorState state)
@@ -139,7 +169,11 @@ public class ControllerManager : MonoBehaviour
         UpdateCursorState();
     }
 
-    private IEnumerator SmoothTransition(Action onComplete)
+    private IEnumerator SmoothTransition(
+        Action onComplete,
+        float transitionDuration = -1,
+        AnimationCurve transitionCurve = null
+    )
     {
         isTransitioning = true;
         OnTransitionStarted?.Invoke();
@@ -191,7 +225,11 @@ public class ControllerManager : MonoBehaviour
         CompleteTransition(onComplete);
     }
 
-    private IEnumerator DeferredTransition(Action onComplete)
+    private IEnumerator DeferredTransition(
+        Action onComplete,
+        float transitionDuration = -1,
+        AnimationCurve transitionCurve = null
+    )
     {
         isTransitioning = true;
         OnTransitionStarted?.Invoke();
