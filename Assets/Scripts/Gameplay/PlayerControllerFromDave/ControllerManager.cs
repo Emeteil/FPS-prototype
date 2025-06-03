@@ -58,7 +58,6 @@ public class ControllerManager : MonoBehaviour
         }
 
         Instance = this;
-        DontDestroyOnLoad(gameObject);
     }
 
     private void Start()
@@ -151,11 +150,16 @@ public class ControllerManager : MonoBehaviour
 
     private void PerformImmediateSwitch()
     {
+        Camera currentCam = currentController?.GetCamera();
+
         if (currentController != null)
         {
             currentController.OnControllerDisabled();
             OnControllerDisabled?.Invoke(currentController);
+            if (currentCam != null) currentCam.enabled = false;
         }
+
+        Camera targetCam = targetController?.GetCamera();
 
         var previousController = currentController;
         currentController = targetController;
@@ -165,6 +169,7 @@ public class ControllerManager : MonoBehaviour
         currentController.OnControllerEnabled();
         OnControllerEnabled?.Invoke(currentController);
         OnControllerSwitched?.Invoke(previousController, currentController);
+        if (targetCam != null) targetCam.enabled = true;
 
         UpdateCursorState();
     }

@@ -7,13 +7,17 @@ public class WeaponAim : MonoBehaviour
     [SerializeField] private float aimFOV = 40f;
     [SerializeField] private float aimSpeed = 15f;
     [SerializeField] private float returnSpeed = 15f;
+    [SerializeField] private float speedModifierWalk = 0.7f;
+    [SerializeField] private float speedModifierSprint = 0.65f;
     [SerializeField] private KeyCode aimKey = KeyCode.Mouse1;
     
     [Header("Эффекты")]
     [SerializeField] private Animator animator;
     [SerializeField] private string aimAnimParam = "Aiming";
     [SerializeField] private GameObject scopeOverlay;
-    
+
+    private const string SPEED_ID = "aiming";
+
     private bool isAiming = false;
     private FirearmSystem weapon;
 
@@ -35,16 +39,37 @@ public class WeaponAim : MonoBehaviour
             StopAiming();
     }
 
+    private void AddSpeedModifiers()
+    {
+        PlayerMovment.Instance.AddSpeedModifier(
+            SPEED_ID,
+            new PlayerMovment.SpeedModifier(speedModifierWalk, true),
+            PlayerMovment.SpeedType.Walk
+        );
+        PlayerMovment.Instance.AddSpeedModifier(
+            SPEED_ID,
+            new PlayerMovment.SpeedModifier(speedModifierSprint, true),
+            PlayerMovment.SpeedType.Sprint
+        );
+    }
+
+    private void RemoveSpeedModifiers()
+    {
+        PlayerMovment.Instance.RemoveSpeedModifier(SPEED_ID, PlayerMovment.SpeedType.Walk);
+        PlayerMovment.Instance.RemoveSpeedModifier(SPEED_ID, PlayerMovment.SpeedType.Sprint);
+    }
+
     public void StartAiming()
     {
         if (isAiming || weapon == null) return;
-        
+
         isAiming = true;
-        CameraFOVManager.Instance.RequestAim(aimFOV, aimSpeed);
-        
+        AddSpeedModifiers();
+        CameraFOVManager.Instance.RequestFOVChange(aimFOV, aimSpeed, CameraFOVManager.PRIORITY_HIGH, this);
+
         if (animator != null)
             animator.SetBool(aimAnimParam, true);
-        
+
         if (scopeOverlay != null)
             scopeOverlay.SetActive(true);
     }
@@ -54,7 +79,8 @@ public class WeaponAim : MonoBehaviour
         if (!isAiming) return;
         
         isAiming = false;
-        CameraFOVManager.Instance.ReleaseAim();
+        RemoveSpeedModifiers();
+        CameraFOVManager.Instance.ReleaseFOVRequest(this);
         
         if (animator != null)
             animator.SetBool(aimAnimParam, false);
@@ -68,7 +94,7 @@ public class WeaponAim : MonoBehaviour
         if (isAiming)
         {
             isAiming = false;
-            CameraFOVManager.Instance.ReleaseAim();
+            CameraFOVManager.Instance.ReleaseFOVRequest(this);
             
             if (animator != null)
                 animator.SetBool(aimAnimParam, false);

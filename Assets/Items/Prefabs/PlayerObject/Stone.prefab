@@ -51,8 +51,6 @@ MonoBehaviour:
   weaponAnimator: {fileID: 0}
   damageProfile:
     baseDamage: 10
-    headshotMultiplier: 2
-    limbMultiplier: 0.5
     damageLayers:
       serializedVersion: 2
       m_Bits: 192
@@ -61,10 +59,10 @@ MonoBehaviour:
     maxAffectedMass: 50
     considerDistanceForce: 1
     maxDistanceForce: 50
-    useDistanceFalloff: 0
-    minFalloffDistance: 20
-    maxFalloffDistance: 100
-    minDamageMultiplier: 0.75
+    useDistanceFalloff: 1
+    minFalloffDistance: 15
+    maxFalloffDistance: 150
+    minDamageMultiplier: 0.65
     distanceFalloffCurve:
       serializedVersion: 2
       m_Curve:
@@ -72,17 +70,17 @@ MonoBehaviour:
         time: 0
         value: 1
         inSlope: 0
-        outSlope: 0
-        tangentMode: 0
+        outSlope: -0.5
+        tangentMode: 69
         weightedMode: 0
         inWeight: 0
         outWeight: 0
       - serializedVersion: 3
         time: 1
         value: 0.5
-        inSlope: 0
+        inSlope: -0.5
         outSlope: 0
-        tangentMode: 0
+        tangentMode: 69
         weightedMode: 0
         inWeight: 0
         outWeight: 0
@@ -90,7 +88,7 @@ MonoBehaviour:
       m_PostInfinity: 2
       m_RotationOrder: 4
     useRandomDamage: 1
-    damageRandomization: 3
+    damageRandomization: 2
     minDamageCap: 0.5
     impactEffect: {fileID: 0}
     bloodEffect: {fileID: 0}
@@ -169,6 +167,8 @@ MonoBehaviour:
   aimFOV: 40
   aimSpeed: 15
   returnSpeed: 15
+  speedModifierWalk: 0.7
+  speedModifierSprint: 0.65
   aimKey: 324
   animator: {fileID: 0}
   aimAnimParam: Aiming

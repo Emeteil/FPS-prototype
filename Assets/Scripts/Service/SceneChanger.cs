@@ -4,7 +4,7 @@ using UnityEngine.SceneManagement;
 
 public class SceneChanger : MonoBehaviour
 {
-    private Text loadingText;
+    [SerializeField] private Text loadingText;
 
     public static SceneChanger Instance { get; private set; }
 

@@ -1,13 +1,25 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerMovment : MonoBehaviour
 {
     [Header("Movement")]
-    [SerializeField] public float walkSpeed;
-    [SerializeField] public float sprintSpeed;
+    [SerializeField] private float baseWalkSpeed = 6f;
+    [SerializeField] private float baseSprintSpeed = 8f;
+    [SerializeField] private float spintFOV = 75f;
+    [SerializeField] private float spintFOVpeed = 4f;
+    [SerializeField] private float baseCrouchSpeed = 3.5f;
     [SerializeField] private bool viewSpeedGUI = false;
+
+    private Dictionary<string, SpeedModifier> walkSpeedModifiers = new Dictionary<string, SpeedModifier>();
+    private Dictionary<string, SpeedModifier> sprintSpeedModifiers = new Dictionary<string, SpeedModifier>();
+    private Dictionary<string, SpeedModifier> crouchSpeedModifiers = new Dictionary<string, SpeedModifier>();
+
+    public float walkSpeed { get; private set; }
+    public float sprintSpeed { get; private set; }
+    public float crouchSpeed { get; private set; }
 
     private float moveSpeed;
     private float desiredMoveSpeed;
@@ -27,7 +39,6 @@ public class PlayerMovment : MonoBehaviour
     bool readyToJump;
 
     [Header("Crounching")]
-    [SerializeField] public float crouchSpeed;
     [SerializeField] private float crouchYScale;
     [SerializeField] private float startYScale;
 
@@ -59,6 +70,25 @@ public class PlayerMovment : MonoBehaviour
 
     public MovementState state;
 
+    public struct SpeedModifier
+    {
+        public float value;
+        public bool isMultiplicative;
+
+        public SpeedModifier(float value, bool isMultiplicative)
+        {
+            this.value = value;
+            this.isMultiplicative = isMultiplicative;
+        }
+    }
+
+    public enum SpeedType
+    {
+        Walk,
+        Sprint,
+        Crouch
+    }
+
     public enum MovementState
     {
         walking,
@@ -84,17 +114,92 @@ public class PlayerMovment : MonoBehaviour
         _block = false;
     }
 
+    private void UpdateActualSpeeds()
+    {
+        walkSpeed = CalculateModifiedSpeed(baseWalkSpeed, walkSpeedModifiers);
+        sprintSpeed = CalculateModifiedSpeed(baseSprintSpeed, sprintSpeedModifiers);
+        crouchSpeed = CalculateModifiedSpeed(baseCrouchSpeed, crouchSpeedModifiers);
+    }
+
+    private float CalculateModifiedSpeed(float baseSpeed, Dictionary<string, SpeedModifier> modifiers)
+    {
+        if (modifiers.Count == 0) return baseSpeed;
+
+        float minMultiplier = 1f;
+        float additive = 0f;
+
+        foreach (var modifier in modifiers.Values)
+        {
+            if (modifier.isMultiplicative)
+                minMultiplier = Mathf.Min(minMultiplier, modifier.value);
+            else
+                additive += modifier.value;
+        }
+
+        return (baseSpeed + additive) * minMultiplier;
+    }
+
+    public void AddSpeedModifier(string id, SpeedModifier modifier, SpeedType speedType)
+    {
+        switch (speedType)
+        {
+            case SpeedType.Walk:
+                walkSpeedModifiers[id] = modifier;
+                break;
+            case SpeedType.Sprint:
+                sprintSpeedModifiers[id] = modifier;
+                break;
+            case SpeedType.Crouch:
+                crouchSpeedModifiers[id] = modifier;
+                break;
+        }
+
+        UpdateActualSpeeds();
+    }
+
+    public void RemoveSpeedModifier(string id, SpeedType speedType)
+    {
+        switch (speedType)
+        {
+            case SpeedType.Walk:
+                if (walkSpeedModifiers.ContainsKey(id))
+                    walkSpeedModifiers.Remove(id);
+                break;
+            case SpeedType.Sprint:
+                if (sprintSpeedModifiers.ContainsKey(id))
+                    sprintSpeedModifiers.Remove(id);
+                break;
+            case SpeedType.Crouch:
+                if (crouchSpeedModifiers.ContainsKey(id))
+                    crouchSpeedModifiers.Remove(id);
+                break;
+        }
+
+        UpdateActualSpeeds();
+    }
+
     private void Start()
     {
         Pause.Instance.AddScript(this);
         rb = GetComponent<Rigidbody>();
         rb.freezeRotation = true;
         readyToJump = true;
+
+        UpdateActualSpeeds();
     }
+
+    public static PlayerMovment Instance { get; private set; }
 
     private void Awake()
     {
         startYScale = transform.localScale.y;
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+
+        Instance = this;
     }
 
     private void Update()
@@ -189,19 +294,24 @@ public class PlayerMovment : MonoBehaviour
             state = MovementState.air;
         }
 
-        if (Mathf.Abs(desiredMoveSpeed - lastDesiredMoveSpeed) > 8f && moveSpeed != 0)
-        {
-            StopAllCoroutines();
-            StartCoroutine(SmoothlyLerpMoveSpeed());
-        }
+        // if (state == MovementState.sprinting)
+        if (Input.GetKey(sprintKey) && state != MovementState.crouching)
+            CameraFOVManager.Instance.RequestFOVChange(spintFOV, spintFOVpeed, CameraFOVManager.PRIORITY_LOW, this);
         else
-        {
-            moveSpeed = desiredMoveSpeed;
-        }
+            CameraFOVManager.Instance.ReleaseFOVRequest(this);
+
+        if (Mathf.Abs(desiredMoveSpeed - lastDesiredMoveSpeed) > 8f && moveSpeed != 0)
+            {
+                StopAllCoroutines();
+                StartCoroutine(SmoothlyLerpMoveSpeed());
+            }
+            else
+            {
+                moveSpeed = desiredMoveSpeed;
+            }
 
         lastDesiredMoveSpeed = desiredMoveSpeed;
     }
-
     private IEnumerator SmoothlyLerpMoveSpeed()
     {
         float time = 0;

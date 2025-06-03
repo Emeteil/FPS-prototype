@@ -383,9 +383,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2df63f50a9922374d96941fdaca3750b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  walkSpeed: 6
-  sprintSpeed: 8
-  viewSpeedGUI: 0
+  baseWalkSpeed: 6
+  baseSprintSpeed: 8
+  spintFOV: 75
+  spintFOVpeed: 3
+  baseCrouchSpeed: 3.5
+  viewSpeedGUI: 1
   speedIncreaseMultiplier: 1.5
   slopeIncreaseMultiplier: 2.5
   groundDrag: 4
@@ -393,7 +396,6 @@ MonoBehaviour:
   jumpCooldown: 0.25
   airMultiplier: 0.25
   jumper: 0
-  crouchSpeed: 3.5
   crouchYScale: 0.5
   startYScale: 0
   jumpKey: 32
@@ -418,6 +420,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fb5bb1ac559671c4da6478dd45b206dc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  maxHealth: 100
+  currentHealth: 100
+  OnDeath:
+    m_PersistentCalls:
+      m_Calls: []
+  OnDamageTaken:
+    m_PersistentCalls:
+      m_Calls: []
+  OnHealthChanged:
+    m_PersistentCalls:
+      m_Calls: []
   _block: 0
 --- !u!114 &1223018654540334462
 MonoBehaviour:
@@ -431,6 +444,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: be8e835ec7faa77469fb98bb6af80343, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  loadingText: {fileID: 0}
 --- !u!114 &827329031909026820
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -14,14 +14,6 @@ public class Life : MonoBehaviour, IDamageable
     public UnityEvent<float> OnDamageTaken;
     public UnityEvent<float> OnHealthChanged;
 
-    private float walkSpeed;
-    private float sprintSpeed;
-    private float crouchSpeed;
-    
-    private PlayerMovment playerMovment;
-    private PlayerInteraction playerInteraction;
-    private GrabUp grabUp;
-
     [NonSerialized] public bool dead = false;
     [HideInInspector] public bool _block = false;
     private bool _ignorePause = false;
@@ -53,20 +45,16 @@ public class Life : MonoBehaviour, IDamageable
         _block = false;
     }
 
-    private void Start()
-    {
-        playerMovment = GetComponent<PlayerMovment>();
-        playerInteraction = GetComponent<PlayerInteraction>();
-        grabUp = GetComponent<GrabUp>();
-
-        walkSpeed = playerMovment.walkSpeed;
-        sprintSpeed = playerMovment.sprintSpeed;
-        crouchSpeed = playerMovment.crouchSpeed;
-    }
-
     private void Update()
     {        
         if (_block) return;
+
+        if (Input.GetKeyDown(KeyCode.L))
+        {
+            Kill();
+            return;
+        }
+
         if (!dead) return;
         if (!Input.anyKeyDown) return;
 
@@ -95,37 +83,77 @@ public class Life : MonoBehaviour, IDamageable
 
     public void Kill()
     {
-        ControllerManager.Instance.SwitchToDefault(ControllerSwitchMode.Immediate);
-        playerMovment.CrouchDown();
-        playerMovment.Block();
-        playerInteraction.Block();
+        ControllerManager.Instance.SwitchToDefault(ControllerSwitchMode.Immediate, onComplete: () => {
+            PlayerMovment.Instance.CrouchDown();
+            PlayerMovment.Instance.Block();
+            PlayerInteraction.Instance.Block();
+            InventorySystem.Instance.Block();
 
-        grabUp.ReleaseObject();
-        grabUp.Block();
+            GrabUp.Instance.ReleaseObject();
+            GrabUp.Instance.Block();
 
-        OnDeath.Invoke();
-        currentHealth = 0;
-        dead = true;
+            OnDeath.Invoke();
+            currentHealth = 0;
+            dead = true;
+        });
     }
+
+    private const string DECELERATE_ID = "decelerate";
+    private const string STRONG_DECELERATE_ID = "strong_decelerate";
 
     public void Decelerate()
     {
-        playerMovment.walkSpeed = walkSpeed / 1.5f;
-        playerMovment.sprintSpeed = walkSpeed;
-        playerMovment.crouchSpeed = crouchSpeed;
+        RemoveAllDecelerationEffects();
+        
+        PlayerMovment.Instance.AddSpeedModifier(
+            DECELERATE_ID,
+            new PlayerMovment.SpeedModifier(1f/1.5f, true),
+            PlayerMovment.SpeedType.Walk
+        );
+        
+        PlayerMovment.Instance.AddSpeedModifier(
+            DECELERATE_ID,
+            new PlayerMovment.SpeedModifier(1f, true),
+            PlayerMovment.SpeedType.Sprint
+        );
     }
 
     public void StronglyDecelerate()
     {
-        playerMovment.walkSpeed = walkSpeed / 2f;
-        playerMovment.sprintSpeed = walkSpeed / 2f;
-        playerMovment.crouchSpeed = crouchSpeed / 1.5f;
+        RemoveAllDecelerationEffects();
+        
+        PlayerMovment.Instance.AddSpeedModifier(
+            STRONG_DECELERATE_ID,
+            new PlayerMovment.SpeedModifier(0.5f, true),
+            PlayerMovment.SpeedType.Walk
+        );
+        
+        PlayerMovment.Instance.AddSpeedModifier(
+            STRONG_DECELERATE_ID,
+            new PlayerMovment.SpeedModifier(0.5f, true),
+            PlayerMovment.SpeedType.Sprint
+        );
+        
+        PlayerMovment.Instance.AddSpeedModifier(
+            STRONG_DECELERATE_ID,
+            new PlayerMovment.SpeedModifier(1f/1.5f, true),
+            PlayerMovment.SpeedType.Crouch
+        );
     }
 
     public void ResetDecelerate()
     {
-        playerMovment.walkSpeed = walkSpeed;
-        playerMovment.sprintSpeed = sprintSpeed;
-        playerMovment.crouchSpeed = crouchSpeed;
+        RemoveAllDecelerationEffects();
+    }
+
+    private void RemoveAllDecelerationEffects()
+    {
+        PlayerMovment.Instance.RemoveSpeedModifier(DECELERATE_ID, PlayerMovment.SpeedType.Walk);
+        PlayerMovment.Instance.RemoveSpeedModifier(DECELERATE_ID, PlayerMovment.SpeedType.Sprint);
+        PlayerMovment.Instance.RemoveSpeedModifier(DECELERATE_ID, PlayerMovment.SpeedType.Crouch);
+        
+        PlayerMovment.Instance.RemoveSpeedModifier(STRONG_DECELERATE_ID, PlayerMovment.SpeedType.Walk);
+        PlayerMovment.Instance.RemoveSpeedModifier(STRONG_DECELERATE_ID, PlayerMovment.SpeedType.Sprint);
+        PlayerMovment.Instance.RemoveSpeedModifier(STRONG_DECELERATE_ID, PlayerMovment.SpeedType.Crouch);
     }
 }

@@ -10,7 +10,28 @@ public class CameraFOVManager : MonoBehaviour
     
     private float targetFOV;
     private float fovChangeSpeed = 15f;
-    private int activeAimRequests = 0;
+    private FOVRequest currentRequest;
+    
+    private class FOVRequest
+    {
+        public float fov;
+        public float speed;
+        public int priority;
+        public object owner;
+        
+        public FOVRequest(float fov, float speed, int priority, object owner)
+        {
+            this.fov = fov;
+            this.speed = speed;
+            this.priority = priority;
+            this.owner = owner;
+        }
+    }
+    
+    public const int PRIORITY_LOW = 1;       // Например, для бега
+    public const int PRIORITY_NORMAL = 2;    // Обычные действия
+    public const int PRIORITY_HIGH = 3;      // Важные действия (прицеливание)
+    public const int PRIORITY_CRITICAL = 4;  // Критически важные действия
 
     private void Awake()
     {
@@ -21,12 +42,12 @@ public class CameraFOVManager : MonoBehaviour
         }
         
         Instance = this;
-        DontDestroyOnLoad(gameObject);
         
         if (playerCamera == null)
             playerCamera = Camera.main;
             
         targetFOV = defaultFOV;
+        currentRequest = new FOVRequest(defaultFOV, fovChangeSpeed, 0, this);
     }
 
     private void Update()
@@ -41,25 +62,30 @@ public class CameraFOVManager : MonoBehaviour
         }
     }
 
-    public void RequestAim(float aimFOV, float speed = 15f)
+    public void RequestFOVChange(float aimFOV, float speed, int priority, object owner)
     {
-        activeAimRequests++;
-        targetFOV = aimFOV;
-        fovChangeSpeed = speed;
+        if (currentRequest == null || priority > currentRequest.priority || 
+            (priority == currentRequest.priority && owner == currentRequest.owner))
+        {
+            currentRequest = new FOVRequest(aimFOV, speed, priority, owner);
+            targetFOV = aimFOV;
+            fovChangeSpeed = speed;
+        }
     }
 
-    public void ReleaseAim()
+    public void ReleaseFOVRequest(object owner)
     {
-        activeAimRequests = Mathf.Max(0, activeAimRequests - 1);
-        
-        if (activeAimRequests == 0)
+        if (currentRequest != null && currentRequest.owner == owner)
         {
-            ResetFOV();
+            currentRequest = new FOVRequest(defaultFOV, currentRequest.speed, 0, this);
+            targetFOV = defaultFOV;
+            fovChangeSpeed = currentRequest.speed;
         }
     }
 
     public void ResetFOV(float speed = 8f)
     {
+        currentRequest = new FOVRequest(defaultFOV, speed, 0, this);
         targetFOV = defaultFOV;
         fovChangeSpeed = speed;
     }
@@ -67,9 +93,7 @@ public class CameraFOVManager : MonoBehaviour
     public void SetDefaultFOV(float newFOV)
     {
         defaultFOV = newFOV;
-        if (activeAimRequests == 0)
-        {
+        if (currentRequest.priority == 0)
             targetFOV = defaultFOV;
-        }
     }
 }
