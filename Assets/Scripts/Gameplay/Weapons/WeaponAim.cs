@@ -21,9 +21,13 @@ public class WeaponAim : MonoBehaviour
     private bool isAiming = false;
     private FirearmSystem weapon;
 
+    private float aimSensitivityMulti;
+
     private void Awake()
     {
         weapon = GetComponent<FirearmSystem>();
+
+        aimSensitivityMulti = aimFOV / CameraFOVManager.Instance.DefaultFOV;
     }
 
     private void Update()
@@ -66,6 +70,10 @@ public class WeaponAim : MonoBehaviour
         isAiming = true;
         AddSpeedModifiers();
         CameraFOVManager.Instance.RequestFOVChange(aimFOV, aimSpeed, CameraFOVManager.PRIORITY_HIGH, this);
+        PlayerCamera.Instance.AddSensitivityModifier(
+            SPEED_ID, 
+            new PlayerCamera.SensitivityModifier(aimSensitivityMulti, true)
+        );
 
         if (animator != null)
             animator.SetBool(aimAnimParam, true);
@@ -81,6 +89,7 @@ public class WeaponAim : MonoBehaviour
         isAiming = false;
         RemoveSpeedModifiers();
         CameraFOVManager.Instance.ReleaseFOVRequest(this);
+        PlayerCamera.Instance.RemoveSensitivityModifier(SPEED_ID);
         
         if (animator != null)
             animator.SetBool(aimAnimParam, false);

@@ -94,14 +94,44 @@ public class FireMode
 }
 
 [System.Serializable]
+public class WeaponSwaySettings
+{
+    [Header("Настройки тряски")]
+    public bool enableSway = true;
+    [Range(0f, 10f)] public float swayAmount = 1f;
+    [Range(0f, 10f)] public float maxSway = 0.7f;
+    public Vector3 swayAxes = new Vector3(0.7f, 0.4f, 0f);
+
+    [Header("Зависимость от скорости")]
+    public AnimationCurve velocityResponseCurve = new AnimationCurve(
+        new Keyframe(0f, 0f),
+        new Keyframe(6f, 0.2f),
+        new Keyframe(8f, 0.8f),
+        new Keyframe(10f, 1f)
+    );
+    [Tooltip("Максимальная скорость для расчета кривой")]
+    public float maxReferenceSpeed = 10f;
+
+    [Header("Плавность движения")]
+    public AnimationCurve smoothnessCurve = new AnimationCurve(
+        new Keyframe(0f, 1f),
+        new Keyframe(0.6f, 0.8f),
+        new Keyframe(0.8f, 0.2f),
+        new Keyframe(1f, 0f)
+    );
+    [Range(0f, 1f)] public float minSmoothFactor = 0.2f;
+    [Range(0f, 1f)] public float maxSmoothFactor = 0.35f;
+}
+
+[System.Serializable]
 public class SpreadSettings
 {
     [Header("Разброс")]
-    [Range(0f, 10f)] public float baseSpread = 1f;
-    [Range(0f, 10f)] public float maxSpread = 3f;
-    [Range(0f, 10f)] public float spreadPerShot = 0.2f;
-    [Range(0f, 10f)] public float spreadRecoveryRate = 1f;
-    [Range(0f, 5f)] public float movementSpreadMultiplier = 1.5f;
+    [Range(0f, 10f)] public float baseSpread = 0.05f;
+    [Range(0f, 10f)] public float maxSpread = 1f;
+    [Range(0f, 10f)] public float spreadPerShot = 0.05f;
+    [Range(0f, 10f)] public float spreadRecoveryRate = 0.5f;
+    [Range(0f, 5f)] public float movementSpreadMultiplier = 1.3f;
 }
 
 [System.Serializable]
@@ -138,6 +168,9 @@ public class FirearmSystem : MonoBehaviour
     [SerializeField] private GameObject shellEjectEffect;
     [SerializeField] private Transform shellEjectPoint;
 
+    [Header("Тряска оружия")]
+    public WeaponSwaySettings swaySettings;
+
     [Header("Эффекты пополнения")]
     public ParticleSystem ammoPickupEffect;
     public AudioClip ammoPickupSound;
@@ -162,6 +195,19 @@ public class FirearmSystem : MonoBehaviour
     private float lastDamageDealt;
     private float lastHitDistance;
     private string lastHitBodyPart;
+
+    private Rigidbody playerRigidbody;
+    private Vector3 initialPosition;
+    private Quaternion initialRotation;
+    private Vector3 targetSwayPosition;
+    private Quaternion targetSwayRotation;
+
+    private void Awake()
+    {
+        playerRigidbody = GameObject.FindGameObjectWithTag("Player").GetComponent<Rigidbody>();
+        initialPosition = transform.localPosition;
+        initialRotation = transform.localRotation;
+    }
 
     private void OnDisable()
     {
@@ -226,6 +272,8 @@ public class FirearmSystem : MonoBehaviour
         HandleInput();
         UpdateRecoil();
         UpdateSpread();
+        CalculateWeaponSway();
+        ApplySway();
     }
 
     private void HandleInput()
@@ -319,6 +367,7 @@ public class FirearmSystem : MonoBehaviour
 
         weaponEvents.OnShoot.Invoke();
         if (weaponAnimator != null) weaponAnimator.SetTrigger("Fire");
+        // CameraShakeSystem.Instance?.TriggerShake("gunshot");
 
         ApplyRecoil();
 
@@ -380,6 +429,65 @@ public class FirearmSystem : MonoBehaviour
         return ammoSystem.reserveAmmo - ammoBefore;
     }
 
+    private void CalculateWeaponSway()
+    {
+        if (!swaySettings.enableSway || playerRigidbody == null)
+        {
+            transform.localPosition = initialPosition;
+            return;
+        }
+
+        Vector3 velocity = playerRigidbody.velocity;
+        velocity.y = 0f;
+        float speed = velocity.magnitude;
+
+        float normalizedSpeed = Mathf.Clamp01(speed / swaySettings.maxReferenceSpeed);
+
+        float curveMultiplier = swaySettings.velocityResponseCurve.Evaluate(normalizedSpeed);
+
+        float swayStrength = curveMultiplier * swaySettings.swayAmount;
+
+        Vector3 randomOffset = new Vector3(
+            Mathf.PerlinNoise(Time.time * 2f, 0) - 0.5f,
+            Mathf.PerlinNoise(0, Time.time * 2f) - 0.5f,
+            Mathf.PerlinNoise(Time.time * 1.5f, Time.time * 1.5f) - 0.5f
+        );
+
+        randomOffset.x *= swaySettings.swayAxes.x;
+        randomOffset.y *= swaySettings.swayAxes.y;
+        randomOffset.z *= swaySettings.swayAxes.z;
+
+        targetSwayPosition = initialPosition + randomOffset * swayStrength;
+        targetSwayRotation = initialRotation * Quaternion.Euler(randomOffset * 10f * swayStrength);
+    }
+
+    private void ApplySway()
+    {
+        if (!swaySettings.enableSway) return;
+
+        float speed = playerRigidbody.velocity.magnitude;
+        float normalizedSpeed = Mathf.Clamp01(speed / swaySettings.maxReferenceSpeed);
+        float smoothness = swaySettings.smoothnessCurve.Evaluate(normalizedSpeed);
+        float currentSmoothFactor = Mathf.Lerp(
+            swaySettings.minSmoothFactor,
+            swaySettings.maxSmoothFactor,
+            smoothness
+        );
+
+        transform.localPosition = Vector3.Lerp(
+            transform.localPosition,
+            targetSwayPosition,
+            currentSmoothFactor * Time.deltaTime * 10f
+        );
+
+        transform.localRotation = Quaternion.Slerp(
+            transform.localRotation,
+            targetSwayRotation,
+            currentSmoothFactor * Time.deltaTime * 10f
+        );
+    }
+
+
     private Vector3 CalculateSpread()
     {
         float movementSpread = IsMoving() ? spreadSettings.movementSpreadMultiplier : 1f;
@@ -395,7 +503,7 @@ public class FirearmSystem : MonoBehaviour
 
     private bool IsMoving()
     {
-        return Input.GetAxis("Horizontal") != 0 || Input.GetAxis("Vertical") != 0;
+        return playerRigidbody.velocity.magnitude > PlayerMovment.Instance.BaseCrouchSpeed * 0.1f;
     }
 
     private void ProcessHit(RaycastHit hit)
@@ -587,6 +695,9 @@ public class FirearmSystem : MonoBehaviour
             Random.Range(-recoilProfile.recoilKick.y, recoilProfile.recoilKick.y),
             Random.Range(-recoilProfile.recoilKick.z, recoilProfile.recoilKick.z)
         );
+
+        targetSwayPosition = initialPosition;
+        targetSwayRotation = initialRotation;
     }
 
     private void UpdateRecoil()

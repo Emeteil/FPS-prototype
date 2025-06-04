@@ -8,6 +8,8 @@ public class CameraFOVManager : MonoBehaviour
     [SerializeField] private Camera playerCamera;
     [SerializeField] private float defaultFOV = 60f;
     
+    public float DefaultFOV => defaultFOV;
+
     private float targetFOV;
     private float fovChangeSpeed = 15f;
     private FOVRequest currentRequest;
@@ -33,6 +35,23 @@ public class CameraFOVManager : MonoBehaviour
     public const int PRIORITY_HIGH = 3;      // Важные действия (прицеливание)
     public const int PRIORITY_CRITICAL = 4;  // Критически важные действия
 
+    [HideInInspector] public bool _block = false;
+    private bool _ignorePause = false;
+
+    public void Block(bool pause = false)
+    {
+        if (pause && _ignorePause) return;
+        if (!pause) _ignorePause = true;
+        _block = true;
+    }
+
+    public void Unblock(bool pause = false)
+    {
+        if (pause && _ignorePause) return;
+        if (!pause) _ignorePause = false;
+        _block = false;
+    }
+
     private void Awake()
     {
         if (Instance != null && Instance != this)
@@ -50,8 +69,15 @@ public class CameraFOVManager : MonoBehaviour
         currentRequest = new FOVRequest(defaultFOV, fovChangeSpeed, 0, this);
     }
 
+    private void Start()
+    {
+        Pause.Instance.AddScript(this);
+    }
+
     private void Update()
     {
+        if (_block) return;
+
         if (playerCamera.fieldOfView != targetFOV)
         {
             playerCamera.fieldOfView = Mathf.Lerp(

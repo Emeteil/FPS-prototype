@@ -6,12 +6,16 @@ using UnityEngine;
 public class PlayerMovment : MonoBehaviour
 {
     [Header("Movement")]
-    [SerializeField] private float baseWalkSpeed = 6f;
-    [SerializeField] private float baseSprintSpeed = 8f;
-    [SerializeField] private float spintFOV = 75f;
-    [SerializeField] private float spintFOVpeed = 4f;
-    [SerializeField] private float baseCrouchSpeed = 3.5f;
+    [SerializeField] private const float baseWalkSpeed = 6f;
+    [SerializeField] private const float baseSprintSpeed = 8f;
+    [SerializeField] private const float spintFOV = 75f;
+    [SerializeField] private const float spintFOVpeed = 4f;
+    [SerializeField] private const float baseCrouchSpeed = 3.5f;
     [SerializeField] private bool viewSpeedGUI = false;
+
+    public float BaseWalkSpeed => baseWalkSpeed;
+    public float BaseSprintSpeed => baseSprintSpeed;
+    public float BaseCrouchSpeed => baseCrouchSpeed;
 
     private Dictionary<string, SpeedModifier> walkSpeedModifiers = new Dictionary<string, SpeedModifier>();
     private Dictionary<string, SpeedModifier> sprintSpeedModifiers = new Dictionary<string, SpeedModifier>();
@@ -295,7 +299,7 @@ public class PlayerMovment : MonoBehaviour
         }
 
         // if (state == MovementState.sprinting)
-        if (Input.GetKey(sprintKey) && state != MovementState.crouching)
+        if (Input.GetKey(sprintKey) && state != MovementState.crouching && (horizontalInput != 0 || verticalInput != 0))
             CameraFOVManager.Instance.RequestFOVChange(spintFOV, spintFOVpeed, CameraFOVManager.PRIORITY_LOW, this);
         else
             CameraFOVManager.Instance.ReleaseFOVRequest(this);

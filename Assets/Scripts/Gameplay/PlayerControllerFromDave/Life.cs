@@ -46,7 +46,7 @@ public class Life : MonoBehaviour, IDamageable
     }
 
     private void Update()
-    {        
+    {
         if (_block) return;
 
         if (Input.GetKeyDown(KeyCode.L))

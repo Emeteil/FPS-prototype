@@ -111,7 +111,7 @@ MonoBehaviour:
     burstCount: 3
     burstDelay: 0.1
   spreadSettings:
-    baseSpread: 0.05
+    baseSpread: 0.025
     maxSpread: 1
     spreadPerShot: 0.05
     spreadRecoveryRate: 0.5
@@ -144,6 +144,98 @@ MonoBehaviour:
   muzzleFlash: {fileID: 0}
   shellEjectEffect: {fileID: 0}
   shellEjectPoint: {fileID: 0}
+  swaySettings:
+    enableSway: 1
+    swayAmount: 0.5
+    maxSway: 0.1
+    swayAxes: {x: 0.36, y: 0.15, z: 0}
+    velocityResponseCurve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 0
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 0.7223899
+        value: 0.18303223
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 0.8929655
+        value: 0.7057541
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 0.99997306
+        value: 0.8529701
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    maxReferenceSpeed: 10
+    smoothnessCurve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 1
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 0.7499939
+        value: 0.9055603
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 0.8833423
+        value: 0.24525757
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 1
+        value: 0
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    minSmoothFactor: 0.2
+    maxSmoothFactor: 0.4
   ammoPickupEffect: {fileID: 0}
   ammoPickupSound: {fileID: 0}
   debugMode: 1
@@ -164,7 +256,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f0cc1c9934847f143a127c52e96101a8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  aimFOV: 40
+  aimFOV: 25
   aimSpeed: 15
   returnSpeed: 15
   speedModifierWalk: 0.7

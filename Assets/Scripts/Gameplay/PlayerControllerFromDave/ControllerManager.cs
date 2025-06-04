@@ -203,8 +203,6 @@ public class ControllerManager : MonoBehaviour
         Quaternion startRot = startTransform.rotation;
         float startFOV = transitionCamera.fieldOfView;
 
-        float targetFOV = targetCam.fieldOfView;
-
         while (elapsedTime < transitionDuration)
         {
             elapsedTime += Time.deltaTime;
@@ -212,7 +210,7 @@ public class ControllerManager : MonoBehaviour
 
             transitionCameraObj.transform.position = Vector3.Lerp(startPos, endTransform.position, t);
             transitionCameraObj.transform.rotation = Quaternion.Slerp(startRot, endTransform.rotation, t);
-            transitionCamera.fieldOfView = Mathf.Lerp(startFOV, targetFOV, t);
+            transitionCamera.fieldOfView = Mathf.Lerp(startFOV, targetCam.fieldOfView, t);
 
             yield return null;
         }
@@ -258,7 +256,7 @@ public class ControllerManager : MonoBehaviour
         Vector3 startPos = startTransform.position;
         Quaternion startRot = startTransform.rotation;
         float startFOV = transitionCamera.fieldOfView;
-        float targetFOV = currentController.GetCamera().fieldOfView;
+        Camera targetCam = currentController.GetCamera();
 
         while (elapsedTime < transitionDuration)
         {
@@ -267,7 +265,7 @@ public class ControllerManager : MonoBehaviour
 
             transitionCameraObj.transform.position = Vector3.Lerp(startPos, endTransform.position, t);
             transitionCameraObj.transform.rotation = Quaternion.Slerp(startRot, endTransform.rotation, t);
-            transitionCamera.fieldOfView = Mathf.Lerp(startFOV, targetFOV, t);
+            transitionCamera.fieldOfView = Mathf.Lerp(startFOV, targetCam.fieldOfView, t);
 
             yield return null;
         }
