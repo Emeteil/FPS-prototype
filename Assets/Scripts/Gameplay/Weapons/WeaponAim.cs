@@ -104,6 +104,7 @@ public class WeaponAim : MonoBehaviour
         {
             isAiming = false;
             CameraFOVManager.Instance.ReleaseFOVRequest(this);
+            RemoveSpeedModifiers();
             
             if (animator != null)
                 animator.SetBool(aimAnimParam, false);
